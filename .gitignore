@@ -9,7 +9,7 @@ geckodriver.log
 .vscode/
 Tests/output/
 xmind-sdk-python3/
-products.xmind
+*.xmind
 .ipynb_checkpoints/
 
 
