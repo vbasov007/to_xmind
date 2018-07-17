@@ -15,6 +15,11 @@ def print_pretty_tree(root_node, max_nodes=0):
                 print('\n.\n.\n.\n')
                 break
 
+def print_pretty_tree_plan(tree_levels, annotation_list):
+
+    for i, l in enumerate(tree_levels):
+        print("{0}{1}\n".format("  "*i, l))
+    print("{0}\n".format(", ".join(annotation_list)))
 
 
 def print_tree(root_node):

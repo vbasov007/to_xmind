@@ -14,7 +14,15 @@ class NodeWithData(Node):
             return None
 
 class XMindNode(NodeWithData):
+
     def set_topic(self, topic):
         self.update_data('topic', topic)
+
+    def set_url(self, url):
+        self.update_data('url', url)
+
     def get_topic(self):
         return self.get_data('topic')
+
+    def get_url(self):
+        return self.get_data('url')

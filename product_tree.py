@@ -2,6 +2,7 @@ import pandas as pd
 from anytree import Node
 import re
 
+from infineon_format import format_annotation_for_ifx
 
 def parameter_sort_key(string):
 
@@ -61,6 +62,19 @@ def annotations(df, info_col_names):
 
     return out
 
+def annotations_with_title(df, info_col_names):
+
+    data = df[info_col_names]
+
+    out = []
+    for col in data:
+        val = data[col].values.tolist()[0]
+        if val != "-":
+            annot = format_annotation_for_ifx(col, val)
+            out.append(annot)
+
+    return out
+
 
 
 def table_to_tree(df, tree_level_names, parent_node, last_level_annotations, node_class=Node):
@@ -78,10 +92,8 @@ def table_to_tree(df, tree_level_names, parent_node, last_level_annotations, nod
             new_node = node_class(c, parent_node)
             table_to_tree(filtered_df, tree_level_names[1:], new_node, last_level_annotations, node_class=node_class)
         else:
-            annot = ""
-            if len(last_level_annotations) > 0:
-                annot = ": " + ", ".join(annotations(filtered_df, last_level_annotations))
-            node_class(c + annot, parent_node)
+            ann_list = annotations_with_title(filtered_df, last_level_annotations)
+            node_class("{0} >> {1}".format(c, " | ".join(ann_list)), parent_node)
 
 
     return

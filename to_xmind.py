@@ -27,7 +27,7 @@ Options:
 
 from docopt import docopt
 from product_tree import print_header_value_variation_stat, print_all_variations, table_headers_dict, table_to_tree, arg_to_header
-from print_tree import print_pretty_tree
+from print_tree import print_pretty_tree, print_pretty_tree_plan
 import pandas as pd
 from tree_node import XMindNode
 from xmind_builder import XMindBuilder
@@ -60,14 +60,17 @@ def to_xmind():
     if len(tree_levels) > 1:
         anns = [arg_to_header(a, header_dict, header_list) for a in a_annotations]
         anns = [a for a in anns if a]
+        if a_info:
+            print_pretty_tree_plan(tree_levels, anns)
         table_to_tree(df, tree_levels, root_node, anns, root_node.__class__)
 
     if a_info:
         print_header_value_variation_stat(df)
 
+
         if a_tree_levels:
             for v in a_tree_levels:
-                print_all_variations(df, v, header_dict=header_dict, max_items=100)
+                print_all_variations(df, v, header_dict=header_dict, max_items=5)
 
     if a_print:
         print_pretty_tree(root_node, 30)
