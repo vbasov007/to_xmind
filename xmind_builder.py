@@ -29,7 +29,22 @@ def add_subtopic_from_node(node):
     else:
         new_topic = node.parent.get_topic().addSubTopic()
         new_topic.setTitle(node.name)
+        new_topic.setFolded()
+
+        if node.get_url():
+            new_topic.setURLHyperlink(node.get_url())
+
+        if node.get_note():
+            new_topic.setPlainNotes(node.get_note())
+
         node.set_topic(new_topic)
+
+
+def setup_central_topic(root_node, xmind_central_topic):
+    xmind_central_topic.setTitle(root_node.name)
+    root_node.set_topic(xmind_central_topic)
+    if root_node.get_url():
+        xmind_central_topic.setURLHyperlink(root_node.get_url())
 
 
 class XMindBuilder:
@@ -50,12 +65,13 @@ class XMindBuilder:
             parent=None,
             topic=self.central_topic)
 
-    def build_from_tree(self, root_node):
+    def build_from_tree(self, root_node, xmind_central_topic=None):
 
-        if root_node.parent is None:
-            root_node.parent = self.central_topic_tree_node
+        if xmind_central_topic:
+            setup_central_topic(root_node, xmind_central_topic)
+        else:
+            add_subtopic_from_node(root_node)
 
-        add_subtopic_from_node(root_node)
         for node in root_node.descendants:
             add_subtopic_from_node(node)
 

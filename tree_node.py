@@ -26,3 +26,9 @@ class XMindNode(NodeWithData):
 
     def get_url(self):
         return self.get_data('url')
+
+    def set_note(self, notes):
+        self.update_data('notes', notes)
+
+    def get_note(self):
+        return self.get_data('notes')

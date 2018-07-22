@@ -4,6 +4,10 @@ import re
 
 from infineon_format import format_annotation_for_ifx
 
+from tree_node import XMindNode
+
+from validators import url as is_url
+
 def parameter_sort_key(string):
 
     r = re.match(r"^[-]?[\d]+\.?[\d]*", string)
@@ -75,9 +79,35 @@ def annotations_with_title(df, info_col_names):
 
     return out
 
+def get_single_col_value(df, col_name):
+    return df[col_name].values.tolist()[0]
+
+def format_multiline_annot(ann_list, max_string_len = 50):
+    res = ''
+    cur_str_len = 0
+    for ann in ann_list:
+        if cur_str_len + len(ann) + 3 > max_string_len:
+            res += '\n' + ann
+            cur_str_len = len(ann)
+        else:
+            if cur_str_len == 0:
+                res += ann
+                cur_str_len = len(ann)
+            else:
+                res += ' - ' + ann
+                cur_str_len += len(ann) + 3
+
+    return res
 
 
-def table_to_tree(df, tree_level_names, parent_node, last_level_annotations, node_class=Node):
+
+def table_to_tree(
+        df, tree_level_names, parent_node,
+        last_level_annotations,
+        pop_up_notes,
+        last_level_url_col_name=None,
+        node_class=XMindNode):
+
     if df.empty:
         return
 
@@ -90,11 +120,25 @@ def table_to_tree(df, tree_level_names, parent_node, last_level_annotations, nod
 
         if len(tree_level_names) > 1:
             new_node = node_class(c, parent_node)
-            table_to_tree(filtered_df, tree_level_names[1:], new_node, last_level_annotations, node_class=node_class)
+            table_to_tree(
+                filtered_df,
+                tree_level_names[1:],
+                new_node,
+                last_level_annotations,
+                pop_up_notes,
+                last_level_url_col_name=last_level_url_col_name,
+                node_class=node_class)
         else:
             ann_list = annotations_with_title(filtered_df, last_level_annotations)
-            node_class("{0} >> {1}".format(c, " | ".join(ann_list)), parent_node)
+            new_node = node_class("{0}\n{1}".format(c, format_multiline_annot(ann_list)), parent_node)
 
+            pop_up_notes_list = annotations_with_title(filtered_df, pop_up_notes)
+            new_node.set_note(format_multiline_annot(pop_up_notes_list))
+
+            if last_level_url_col_name:
+                url = get_single_col_value(filtered_df, last_level_url_col_name)
+                if is_url(url):
+                    new_node.set_url(url)
 
     return
 

@@ -1,4 +1,4 @@
-from anytree import RenderTree
+from anytree import RenderTree, Node
 
 
 def print_pretty_tree(root_node, max_nodes=0):
@@ -15,12 +15,27 @@ def print_pretty_tree(root_node, max_nodes=0):
                 print('\n.\n.\n.\n')
                 break
 
-def print_pretty_tree_plan(tree_levels, annotation_list):
+def print_pretty_tree_plan(tree_levels, annotation_list=None, notes_list=None, url_col=None):
 
-    for i, l in enumerate(tree_levels):
-        print("{0}{1}\n".format("  "*i, l))
-    print("{0}\n".format(", ".join(annotation_list)))
+    print("--------------------TREE PLAN:---------------------")
 
+    root = Node('"{0}"'.format(tree_levels[0]))
+    prev_node = root
+    for level in tree_levels[1:]:
+        new_node = Node('"{0}"'.format(level), parent=prev_node)
+        prev_node = new_node
+
+    print_pretty_tree(root)
+
+    if annotation_list:
+        print('Annotations: "{0}"'.format(", ".join(annotation_list)))
+
+    if notes_list:
+        print('Pop-up notes: "{0}"'.format(", ".join(annotation_list)))
+
+    if url_col:
+        print('Url link source: "{0}"'.format(url_col))
+    print("------------------------END------------------------")
 
 def print_tree(root_node):
     print(RenderTree(root_node))
