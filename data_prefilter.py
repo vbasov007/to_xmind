@@ -38,6 +38,15 @@ def exclude_data(df, col_name, val_list):
     return df
 
 
+def include_if_match_string(df, col_name, string):
+
+    if col_name in df.columns.values.tolist():
+        df = df.loc[df[col_name].str.contains(string)]
+    else:
+        print('Error! Column "{0}" is not found in excel columns'.format(col_name))
+
+    return df
+
 def parse_filter_arguments(arg):
 
     col_name = arg.split('=')[0].strip().strip('"').strip("'")

@@ -3,7 +3,8 @@ Usage:
     to_xmind FILE_XLSX (-i)
     to_xmind FILE_XLSX [--xmind=FILE_XMIND] [--tree=COL_HEADS]... [--ann=ANN_COL_HEADS]... [--note=NOTE_COL_HEADS]...
                         [--sheet=SHEET] [--main=TOPIC] [--url=URL_COL] [-i] [-p]
-                        [--include_only=INCL_FLT_STR]... [--exclude=EXCL_FLT_STR]... [-comment=COMMENT]
+                        [--include_only=INCL_FLT_STR]... [--exclude=EXCL_FLT_STR]...
+                        [--match=MATCH_STR]  [-comment=COMMENT]
         
 Arguments:
     FILE_XLSX       Input excel file path
@@ -24,10 +25,11 @@ Options:
     -a --ann=ANN_COL_HEADS          Next columns to annotate the deepest value in a tree
     -x --xmind=FILE_XMIND           XMIND file path
     -s --sheet=SHEET                Optional xmind sheet name
-    -m --main=TOPIC                 Optional xmind root topic [default: MAIN]
+    -m --main=TOPIC                    Optional xmind root topic [default: MAIN]
     -p --print                      Print generated tree on console
     -o --include_only=INCL_FLT_STR
     -e --exclude=EXCL_FLT_STR
+    --match=MATCH_STR
 
 
 """
@@ -38,13 +40,15 @@ from print_tree import print_pretty_tree, print_pretty_tree_plan
 import pandas as pd
 from tree_node import XMindNode
 from xmind_builder import XMindBuilder
-from data_prefilter import parse_filter_arguments, include_only_data, exclude_data
+from data_prefilter import parse_filter_arguments, include_only_data, exclude_data, include_if_match_string
 import sys
+from mylogger import mylog
 
 def to_xmind():
     args = docopt(__doc__)
-    #print(args)
-    print(sys.argv)
+
+    mylog.debug(sys.argv)
+    mylog.debug(args)
 
     a_info = args['--info']
     a_tree_levels = args['--tree']
@@ -57,11 +61,12 @@ def to_xmind():
     a_url_col = args['--url']
     a_include_only = args['--include_only']
     a_exclude = args['--exclude']
+    a_match = args['--match']
 
     try:
         df = pd.read_excel(a_file_xlsx)
     except:
-        print("Can't read file: {0}".format(a_file_xlsx))
+        mylog.error("Can't read file: {0}".format(a_file_xlsx))
         return
 
     header_dict = table_headers_dict(df)
@@ -74,6 +79,11 @@ def to_xmind():
     for a in a_exclude:
         col, val = parse_filter_arguments(a)
         df = exclude_data(df, arg_to_header(col, header_dict, header_list), val)
+
+    if a_match:
+        col, val = parse_filter_arguments(a_match)
+        df = include_if_match_string(df, arg_to_header(col, header_dict, header_list), val[0])
+
 
     root_node = XMindNode(a_main_topic_name)
 
@@ -99,9 +109,9 @@ def to_xmind():
     if a_info:
         print_header_value_variation_stat(df)
 
-        if a_tree_levels:
-            for v in a_tree_levels:
-                print_all_variations(df, v, header_dict=header_dict, max_items=5)
+        # if a_tree_levels:
+        #    for v in a_tree_levels:
+        #        print_all_variations(df, v, header_dict=header_dict, max_items=5)
 
     if a_print:
         print_pretty_tree(root_node, 30)

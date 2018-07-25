@@ -94,7 +94,7 @@ def format_multiline_annot(ann_list, max_string_len = 50):
                 res += ann
                 cur_str_len = len(ann)
             else:
-                res += ' - ' + ann
+                res += ' | ' + ann
                 cur_str_len += len(ann) + 3
 
     return res
@@ -166,16 +166,29 @@ def arg_to_header(arg, header_dict, header_list):
         return None
 
 
+def print_limited_length(string, max_len=128):
+    if len(string) < max_len:
+        print(string[:max_len])
+    else:
+        print(string[:max_len], '...')
+
+
 def print_header_value_variation_stat(df):
+
+    print = print_limited_length
 
     headers = df.columns.values.tolist()
     i = 1
+
     for h in headers:
-        print('{0}. "{1}" - {2}'.format(i, h, len(variations(df, h))))
+        v = variations(df, h)
+        s1 = '{0}. "{1}" - {2}:'.format(i, h, len(v))
+        s2 = " "*(40-len(s1)) + ', '.join(v)
+        print(s1+s2)
         i += 1
 
 
-def print_all_variations(df, arg, header_dict=None, max_items = 999999):
+def print_all_variations(df, arg, header_dict=None, max_items=999999):
 
     if header_dict:
         header = arg_to_header(arg, header_dict, df.columns.values.tolist())
@@ -186,7 +199,7 @@ def print_all_variations(df, arg, header_dict=None, max_items = 999999):
         lst = variations(df, header)
         if len(lst) > max_items:
             lst = lst[:max_items]
-        print('\n"{0}":\n'.format(header))
+        print('"{0}": '.format(header))
         print('{0}'.format(repr(", ".join(lst))))
     else:
         print('\n"{0}" not found\n'.format(arg))

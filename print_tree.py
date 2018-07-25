@@ -31,7 +31,7 @@ def print_pretty_tree_plan(tree_levels, annotation_list=None, notes_list=None, u
         print('Annotations: "{0}"'.format(", ".join(annotation_list)))
 
     if notes_list:
-        print('Pop-up notes: "{0}"'.format(", ".join(annotation_list)))
+        print('Pop-up notes: "{0}"'.format(", ".join(notes_list)))
 
     if url_col:
         print('Url link source: "{0}"'.format(url_col))
