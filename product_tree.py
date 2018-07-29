@@ -8,6 +8,7 @@ from tree_node import XMindNode
 
 from validators import url as is_url
 
+
 def parameter_sort_key(string):
 
     r = re.match(r"^[-]?[\d]+\.?[\d]*", string)
@@ -41,6 +42,7 @@ def sorted_smart(lst):
 
     return as_number + as_string
 
+
 def variations(df, col_header):
     a = set(df[col_header].tolist())
     lst = list(a)
@@ -66,6 +68,7 @@ def annotations(df, info_col_names):
 
     return out
 
+
 def annotations_with_title(df, info_col_names):
 
     data = df[info_col_names]
@@ -79,8 +82,10 @@ def annotations_with_title(df, info_col_names):
 
     return out
 
+
 def get_single_col_value(df, col_name):
     return df[col_name].values.tolist()[0]
+
 
 def format_multiline_annot(ann_list, max_string_len = 50):
     res = ''
@@ -98,7 +103,6 @@ def format_multiline_annot(ann_list, max_string_len = 50):
                 cur_str_len += len(ann) + 3
 
     return res
-
 
 
 def table_to_tree(

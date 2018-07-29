@@ -47,6 +47,7 @@ def include_if_match_string(df, col_name, string):
 
     return df
 
+
 def parse_filter_arguments(arg):
 
     col_name = arg.split('=')[0].strip().strip('"').strip("'")

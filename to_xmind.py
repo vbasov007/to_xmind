@@ -84,7 +84,6 @@ def to_xmind():
         col, val = parse_filter_arguments(a_match)
         df = include_if_match_string(df, arg_to_header(col, header_dict, header_list), val[0])
 
-
     root_node = XMindNode(a_main_topic_name)
 
     tree_levels = [arg_to_header(a, header_dict, header_list) for a in a_tree_levels]
@@ -109,10 +108,6 @@ def to_xmind():
     if a_info:
         print_header_value_variation_stat(df)
 
-        # if a_tree_levels:
-        #    for v in a_tree_levels:
-        #        print_all_variations(df, v, header_dict=header_dict, max_items=5)
-
     if a_print:
         print_pretty_tree(root_node, 30)
 
@@ -127,7 +122,6 @@ def to_xmind():
             print('XMIND saved to file "{0}"'.format(a_file_xmind))
         else:
             print('Quited without saving. File was not changed')
-
 
 
 if __name__ == '__main__':
