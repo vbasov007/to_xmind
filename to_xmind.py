@@ -69,6 +69,8 @@ def to_xmind():
         mylog.error("Can't read file: {0}".format(a_file_xlsx))
         return
 
+    df = df.astype(str)
+
     header_dict = table_headers_dict(df)
     header_list = df.columns.values.tolist()
 

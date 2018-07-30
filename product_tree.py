@@ -55,7 +55,7 @@ def variations(df, col_header):
 
 
 def take_only(df, col_name, value):
-    return df[df[col_name] == value]
+    return df[df[col_name] == str(value)]
 
 
 def annotations(df, info_col_names):

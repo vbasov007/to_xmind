@@ -53,3 +53,16 @@ to_xmind.py datafiles\IPM.xlsx -i -t9 -t12 -t14 -t8 -t1 -u2 -a5 -a9 -a10 -a11 -a
 
 
 
+to_xmind.py datafiles\Gate_Driver_ICs.xlsx -i -t5 -t11 -t15 -t10 -t1 -u2 -a16 -a35 -a13 -a15 -a12 -a4 -n5 -n6 -n7 -n8 -n9 -n10 -n11 -n12 -n13 -n14 -n15 -n16 -n17 -n18 -n19 -n20 -n21 -n22 -n23 -n24 -n25 -n26 -n27 -n28 -n29 -n30 -n31 -n32 -n33 -n34 -n35 -n36 -n37 -n38 -n39 -n40 -n41 -n42 -n43 -n44 -n45 -n46 -n47 --xmind=datafiles\Gate_Driver_ICs_Voltage_Configuration_SwitchType_Channels.xmind --main="Voltage, Configuration, Switch Type, # of Channels"
+
+
+
+to_xmind.py datafiles\Thyristor_Discs.xlsx -i -o9="Electrical Triggered Phase Control Thyristor" -t8 -t3 -t11 -t1 -u2 -a8 -a3 -a4 -a5 -a6 -a7 -a9 -a10 -a11 -a12 -a13 -a14 --xmind=datafiles\Thyristor_Disk_Electrical_Triggered_By_Housing_Voltage.xmind --main="Electrical Triggered, Housing, Voltage [V], I_TSM [A]"
+
+to_xmind.py datafiles\Thyristor_Discs.xlsx -i -o9="Electrical Triggered Phase Control Thyristor" -t3 -t11 -t8 -t1 -u2 -a8 -a3 -a4 -a5 -a6 -a7 -a9 -a10 -a11 -a12 -a13 -a14 --xmind=datafiles\Thyristor_Disk_Electrical_Triggered_By_Voltage_Current_Housing.xmind --main="Electrical Triggered, Voltage [V], I_TSM Current [A]"
+
+
+to_xmind.py datafiles\Thyristor_Discs.xlsx -i -o9="Light Triggered Phase Control Thyristor" -t3 -t11 -t8 -t1 -u2 -a8 -a3 -a4 -a5 -a6 -a7 -a9 -a10 -a11 -a12 -a13 -a14 --xmind=datafiles\Thyristor_Disk_Light_Triggered_By_Voltage_Current_Housing.xmind --main="Light Triggered, Voltage [V], I_TSM Current [A]"
+
+to_xmind.py datafiles\Thyristor_Discs.xlsx -i -o9="Light Triggered Phase Control Thyristor" -t8 -t3 -t11 -t1 -u2 -a8 -a3 -a4 -a5 -a6 -a7 -a9 -a10 -a11 -a12 -a13 -a14 --xmind=datafiles\Thyristor_Disk_Light_Triggered_By_Housing_Voltage.xmind --main="Light Triggered, Housing, Voltage [V], I_TSM [A]"
+
