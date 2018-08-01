@@ -4,7 +4,7 @@ Usage:
     to_xmind FILE_XLSX [--xmind=FILE_XMIND] [--tree=COL_HEADS]... [--ann=ANN_COL_HEADS]... [--note=NOTE_COL_HEADS]...
                         [--sheet=SHEET] [--main=TOPIC] [--url=URL_COL] [-i] [-p]
                         [--include_only=INCL_FLT_STR]... [--exclude=EXCL_FLT_STR]...
-                        [--match=MATCH_STR]  [-comment=COMMENT]
+                        [--match=MATCH_STR] [-d]
         
 Arguments:
     FILE_XLSX       Input excel file path
@@ -14,8 +14,7 @@ Arguments:
     FILE_XMIND      Output .xmind file path
     SHEET           Optional .xmind workbook sheet name
     TOPIC           Name of root topic
-    COMMENT         Any comment to command line string
-    
+
 Options:
     -h --help
     -i --info                       .xlsx file info, tree info
@@ -30,12 +29,13 @@ Options:
     -o --include_only=INCL_FLT_STR
     -e --exclude=EXCL_FLT_STR
     --match=MATCH_STR
+    -d --add_parameter_names        Add parameter names to xmind matrix
 
 
 """
 
 from docopt import docopt
-from product_tree import print_header_value_variation_stat, print_all_variations, table_headers_dict, table_to_tree, arg_to_header
+from product_tree import print_header_value_variation_stat, parameter_names_tree, table_headers_dict, table_to_tree, arg_to_header
 from print_tree import print_pretty_tree, print_pretty_tree_plan
 import pandas as pd
 from tree_node import XMindNode
@@ -62,6 +62,7 @@ def to_xmind():
     a_include_only = args['--include_only']
     a_exclude = args['--exclude']
     a_match = args['--match']
+    a_add_parameter_names = args['--add_parameter_names']
 
     try:
         df = pd.read_excel(a_file_xlsx)
@@ -90,6 +91,10 @@ def to_xmind():
 
     tree_levels = [arg_to_header(a, header_dict, header_list) for a in a_tree_levels]
     tree_levels = [a for a in tree_levels if a]
+
+    if a_add_parameter_names:
+        parameter_names_tree(tree_levels, root_node)
+
     if len(tree_levels) > 1:
         anns = [arg_to_header(a, header_dict, header_list) for a in a_annotations]
         anns = [a for a in anns if a]
@@ -105,7 +110,7 @@ def to_xmind():
         table_to_tree(
             df, tree_levels, root_node,
             anns, notes,
-            last_level_url_col_name=url_col, node_class=root_node.__class__)
+            last_level_url_col_name=url_col)
 
     if a_info:
         print_header_value_variation_stat(df)

@@ -1,10 +1,7 @@
 import pandas as pd
-from anytree import Node
 import re
 
 from infineon_format import format_annotation_for_ifx
-
-from tree_node import XMindNode
 
 from validators import url as is_url
 
@@ -110,7 +107,7 @@ def table_to_tree(
         last_level_annotations,
         pop_up_notes,
         last_level_url_col_name=None,
-        node_class=XMindNode):
+        ):
 
     if df.empty:
         return
@@ -123,18 +120,17 @@ def table_to_tree(
         filtered_df = take_only(df, tree_level_names[0], c)
 
         if len(tree_level_names) > 1:
-            new_node = node_class(c, parent_node)
+            new_node = parent_node.new_node(c, parent_node)
             table_to_tree(
                 filtered_df,
                 tree_level_names[1:],
                 new_node,
                 last_level_annotations,
                 pop_up_notes,
-                last_level_url_col_name=last_level_url_col_name,
-                node_class=node_class)
+                last_level_url_col_name=last_level_url_col_name)
         else:
             ann_list = annotations_with_title(filtered_df, last_level_annotations)
-            new_node = node_class("{0}\n{1}".format(c, format_multiline_annot(ann_list)), parent_node)
+            new_node = parent_node.new_node("{0}\n{1}".format(c, format_multiline_annot(ann_list)), parent_node)
 
             pop_up_notes_list = annotations_with_title(filtered_df, pop_up_notes)
             new_node.set_note(format_multiline_annot(pop_up_notes_list))
@@ -145,6 +141,13 @@ def table_to_tree(
                     new_node.set_url(url)
 
     return
+
+
+def parameter_names_tree(tree_level_names, attach_to_node):
+    prev_node = attach_to_node
+    for level in tree_level_names:
+        new_node = attach_to_node.new_node('{0}'.format(level), parent=prev_node)
+        prev_node = new_node
 
 
 def table_headers_dict(df):
