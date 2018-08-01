@@ -4,6 +4,10 @@ from anytree import Node
 
 class NodeWithData(Node):
 
+    @classmethod
+    def new_node(cls, name, parent=None, **kwargs):
+        return cls(name, parent, **kwargs)
+
     def update_data(self, name, obj):
         self.__dict__.update({name: obj})
 
