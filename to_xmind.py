@@ -1,7 +1,8 @@
 """
 Usage:
     to_xmind FILE_XLSX (-i)
-    to_xmind FILE_XLSX [--xmind=FILE_XMIND] [--tree=COL_HEADS]... [--ann=ANN_COL_HEADS]... [--note=NOTE_COL_HEADS]...
+    to_xmind FILE_XLSX [--xmind=FILE_XMIND] [--html=FILE_HTML]
+                        [--tree=COL_HEADS]... [--ann=ANN_COL_HEADS]... [--note=NOTE_COL_HEADS]...
                         [--sheet=SHEET] [--main=TOPIC] [--url=URL_COL] [-i] [-p]
                         [--include_only=INCL_FLT_STR]... [--exclude=EXCL_FLT_STR]...
                         [--match=MATCH_STR] [-d]
@@ -12,6 +13,7 @@ Arguments:
     URL_COL         Column with URL for datasheet
     ANN_COL_HEADS   Columns used to annotate last value in a tree
     FILE_XMIND      Output .xmind file path
+    FILE_HTML       Output .html file path
     SHEET           Optional .xmind workbook sheet name
     TOPIC           Name of root topic
 
@@ -23,6 +25,7 @@ Options:
     -n --note=NOTE_COL_HEADS        Next columns to note the deepest value in a tree
     -a --ann=ANN_COL_HEADS          Next columns to annotate the deepest value in a tree
     -x --xmind=FILE_XMIND           XMIND file path
+    -g --html=FILE_HTML             HTML file path
     -s --sheet=SHEET                Optional xmind sheet name
     -m --main=TOPIC                    Optional xmind root topic [default: MAIN]
     -p --print                      Print generated tree on console
@@ -41,8 +44,10 @@ import pandas as pd
 from tree_node import XMindNode
 from xmind_builder import XMindBuilder
 from data_prefilter import parse_filter_arguments, include_only_data, exclude_data, include_if_match_string
+from html_builder import make_html
 import sys
 from mylogger import mylog
+from html_template import SimpleHtmlTemplate
 
 def to_xmind():
     args = docopt(__doc__)
@@ -57,6 +62,7 @@ def to_xmind():
     a_print = args['--print']
     a_file_xlsx = args['FILE_XLSX']
     a_file_xmind = args['--xmind']
+    a_file_html = args['--html']
     a_main_topic_name = args['--main']
     a_url_col = args['--url']
     a_include_only = args['--include_only']
@@ -130,6 +136,11 @@ def to_xmind():
         else:
             print('Quited without saving. File was not changed')
 
+    if a_file_html:
+        html_data = make_html(root_node, SimpleHtmlTemplate)
+        # html_data = html_data.encode(encoding='UTF-8')
+        with open(a_file_html, "w", encoding='utf-8') as html_file:
+            html_file.write(html_data)
 
 if __name__ == '__main__':
     to_xmind()
