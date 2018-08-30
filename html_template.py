@@ -13,6 +13,7 @@ class SimpleHtmlTemplate:
     </head>
     <body>
     <style>${Style}</style>
+    <h3>${Table_Title}</h3>
     <table>
         <tr>
         ${Table_Headers}
@@ -43,6 +44,16 @@ class SimpleHtmlTemplate:
                     e.preventDefault();
                 });
             }
+    
+    var x = document.getElementsByClassName('product_status');
+    for (var i = 0; i < x.length; i++){
+        if (x[i].innerHTML=='not for new design' || x[i].innerHTML=='discontinued'){
+            x[i].style.cssText= "color: red; font-weight: bold;";
+        }
+        else{
+            x[i].style.cssText= "color: green; font-weight: bold;";
+        }
+    }
     '''
 
     style = '''
@@ -105,11 +116,58 @@ class SimpleHtmlTemplate:
             
             a:hover {
                 background: lightgray;
+            }
             
+            span.package, span.housing {
+                font-weight: bold;
+                color: black;
+            }
+            
+            span.technology {
+                font-weight: bold;
+                color: green;
+            }
+            
+            span.configuration {
+                font-weight: bold;
+                color: brown;
+            }
+            
+            span.features {
+                font-weight: bold;
+                color: darkblue;
+            }
+            
+            span.qualification, span.applications {
+                font-weight: bold;
+                color: darkblue;
+            }
+            
+            
+            span.product {
+                font-weight: bold;
+                color: darkviolet;
+            }
+            span.measure_value {
+                font-weight: bold;
+                color: darkblue;
+            }
+            
+            span.measure_unit {
+                font-weight: bold;
+                color: orangered;
+            }
+            
+            td.nowrap{
+                white-space: nowrap;
+            }
+               
             /*table {
                 display: block;
                 overflow-x: auto;
                 white-space: nowrap;
             }*/
+            
+           
     
     '''

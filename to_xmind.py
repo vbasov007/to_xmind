@@ -116,7 +116,8 @@ def to_xmind():
         table_to_tree(
             df, tree_levels, root_node,
             anns, notes,
-            last_level_url_col_name=url_col)
+            last_level_url_col_name=url_col,
+            html_mode=bool(a_file_html))
 
     if a_info:
         print_header_value_variation_stat(df)

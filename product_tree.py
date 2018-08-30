@@ -26,7 +26,6 @@ def is_sortable_as_number(string):
     except AttributeError:
         return False
 
-
 def sorted_smart(lst):
     as_number = [s for s in lst if is_sortable_as_number(s)]
     as_string = [s for s in lst if not is_sortable_as_number(s) and s != '-']
@@ -66,7 +65,7 @@ def annotations(df, info_col_names):
     return out
 
 
-def annotations_with_title(df, info_col_names):
+def annotations_with_title(df, info_col_names, html_mode=False):
 
     data = df[info_col_names]
 
@@ -74,8 +73,14 @@ def annotations_with_title(df, info_col_names):
     for col in data:
         val = data[col].values.tolist()[0]
         if val != "-":
-            annot = format_annotation_for_ifx(col, val)
-            out.append(annot)
+
+            if html_mode:
+                val = format_val_with_measure_units_html(val)
+                val = span_format(col, val)
+                out.append("{0}: {1}".format(col, val))
+            else:
+                annot = format_annotation_for_ifx(col, val)
+                out.append(annot)
 
     return out
 
@@ -84,22 +89,47 @@ def get_single_col_value(df, col_name):
     return df[col_name].values.tolist()[0]
 
 
-def format_multiline_annot(ann_list, max_string_len = 50):
+def format_val_with_measure_units_html(string):
+
+    r = re.match(r"^[-]?[\d]+\.?[\d]*[\s]+", string)
+
+    try:
+        val = r.group(0)
+    except AttributeError:
+        return string
+
+    return '<span class="measure_value">{0}</span><span class="measure_unit">{1}</span>'.format(val, string[len(val):])
+
+
+def format_multiline_annot(ann_list, max_string_len=50, html_mode=False):
+
+    line_break = '\n'
+    if html_mode:
+        line_break = '<br />'
+
     res = ''
     cur_str_len = 0
     for ann in ann_list:
-        if cur_str_len + len(ann) + 3 > max_string_len:
-            res += '\n' + ann
+
+        if cur_str_len == 0:
+            res += ann
+            cur_str_len = len(ann)
+        elif cur_str_len + len(ann) + 3 > max_string_len:
+            res += line_break + ann
             cur_str_len = len(ann)
         else:
-            if cur_str_len == 0:
-                res += ann
-                cur_str_len = len(ann)
-            else:
-                res += ' | ' + ann
-                cur_str_len += len(ann) + 3
+            res += ' | ' + ann
+            cur_str_len += len(ann) + 3
 
     return res
+
+
+def span_format(css_class, string):
+    css_class = css_class.lower()
+    css_class = re.sub('<sub>', '_', css_class)
+    css_class = re.sub('</sub>', '', css_class)
+    css_class = re.sub(' ', '_', css_class)
+    return '<span class="{0}">{1}</span>'.format(css_class, string)
 
 
 def table_to_tree(
@@ -107,10 +137,16 @@ def table_to_tree(
         last_level_annotations,
         pop_up_notes,
         last_level_url_col_name=None,
+        html_mode=False
         ):
 
     if df.empty:
         return
+
+    if html_mode:
+        line_break = '<br />'
+    else:
+        line_break = '\n'
 
     conditions = variations(df, tree_level_names[0])
     for c in conditions:
@@ -118,6 +154,11 @@ def table_to_tree(
             continue
 
         filtered_df = take_only(df, tree_level_names[0], c)
+
+        if html_mode:
+            c = format_val_with_measure_units_html(c)
+            c = span_format(tree_level_names[0], c)
+
 
         if len(tree_level_names) > 1:
             new_node = parent_node.new_node(c, parent_node)
@@ -127,13 +168,20 @@ def table_to_tree(
                 new_node,
                 last_level_annotations,
                 pop_up_notes,
-                last_level_url_col_name=last_level_url_col_name)
+                last_level_url_col_name=last_level_url_col_name,
+                html_mode=html_mode)
         else:
-            ann_list = annotations_with_title(filtered_df, last_level_annotations)
-            new_node = parent_node.new_node("{0}\n{1}".format(c, format_multiline_annot(ann_list)), parent_node)
+            ann_list = annotations_with_title(filtered_df, last_level_annotations, html_mode=html_mode)
+            pop_up_notes_list = annotations_with_title(filtered_df, pop_up_notes, html_mode=html_mode)
 
-            pop_up_notes_list = annotations_with_title(filtered_df, pop_up_notes)
-            new_node.set_note(format_multiline_annot(pop_up_notes_list))
+            if html_mode:
+                ann_list.extend(pop_up_notes_list)
+
+            new_node = parent_node.new_node(
+                "{0}{1}{2}".format(c, line_break, format_multiline_annot(ann_list, html_mode=html_mode)), parent_node)
+
+            if not html_mode:
+                new_node.set_note(format_multiline_annot(pop_up_notes_list))
 
             if last_level_url_col_name:
                 url = get_single_col_value(filtered_df, last_level_url_col_name)
