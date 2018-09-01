@@ -210,7 +210,6 @@ def table_headers_dict(df):
 
     return out_dict
 
-
 def arg_to_header(arg, header_dict, header_list):
 
     if arg in header_list:

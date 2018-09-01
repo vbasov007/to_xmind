@@ -5,7 +5,7 @@ Usage:
                         [--tree=COL_HEADS]... [--ann=ANN_COL_HEADS]... [--note=NOTE_COL_HEADS]...
                         [--sheet=SHEET] [--main=TOPIC] [--url=URL_COL] [-i] [-p]
                         [--include_only=INCL_FLT_STR]... [--exclude=EXCL_FLT_STR]...
-                        [--match=MATCH_STR] [-d]
+                        [--match=MATCH_STR] [-d] [-b]
         
 Arguments:
     FILE_XLSX       Input excel file path
@@ -33,6 +33,7 @@ Options:
     -e --exclude=EXCL_FLT_STR
     --match=MATCH_STR
     -d --add_parameter_names        Add parameter names to xmind matrix
+    -b --html_table
 
 
 """
@@ -43,11 +44,12 @@ from print_tree import print_pretty_tree, print_pretty_tree_plan
 import pandas as pd
 from tree_node import XMindNode
 from xmind_builder import XMindBuilder
-from data_prefilter import parse_filter_arguments, include_only_data, exclude_data, include_if_match_string
+from data_prefilter import include_only_data, exclude_data, include_if_match_string
+from command_line_proc import parse_filter_arguments, turn_to_list
 from html_builder import make_html
 import sys
 from mylogger import mylog
-from html_template import SimpleHtmlTemplate
+from html_template import ProductTableAsCompletePage
 
 def to_xmind():
     args = docopt(__doc__)
@@ -56,9 +58,9 @@ def to_xmind():
     mylog.debug(args)
 
     a_info = args['--info']
-    a_tree_levels = args['--tree']
-    a_annotations = args['--ann']
-    a_notes = args['--note']
+    a_tree_levels = turn_to_list(args['--tree'])
+    a_annotations = turn_to_list(args['--ann'])
+    a_notes = turn_to_list(args['--note'])
     a_print = args['--print']
     a_file_xlsx = args['FILE_XLSX']
     a_file_xmind = args['--xmind']
@@ -138,7 +140,7 @@ def to_xmind():
             print('Quited without saving. File was not changed')
 
     if a_file_html:
-        html_data = make_html(root_node, SimpleHtmlTemplate)
+        html_data = make_html(root_node, ProductTableAsCompletePage)
         # html_data = html_data.encode(encoding='UTF-8')
         with open(a_file_html, "w", encoding='utf-8') as html_file:
             html_file.write(html_data)

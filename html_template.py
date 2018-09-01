@@ -1,8 +1,13 @@
 
 from string import Template
 
+class BaseTemplate:
+    html = Template('')
+    script = ''
+    style = ''
 
-class SimpleHtmlTemplate:
+
+class ProductTableAsCompletePage(BaseTemplate):
 
     html = Template('''
     <!DOCTYPE HTML>
@@ -138,7 +143,7 @@ class SimpleHtmlTemplate:
                 color: darkblue;
             }
             
-            span.qualification, span.applications {
+            span.qualification, span.applications, span.topology {
                 font-weight: bold;
                 color: darkblue;
             }
@@ -161,13 +166,23 @@ class SimpleHtmlTemplate:
             td.nowrap{
                 white-space: nowrap;
             }
-               
-            /*table {
-                display: block;
-                overflow-x: auto;
-                white-space: nowrap;
-            }*/
-            
-           
-    
     '''
+
+
+class ProductTableOnly(BaseTemplate):
+
+    html = Template('''
+    <div class="hideable" data-activate-on=${View_Name} data-category=${Category}
+        data-subcategory=${Subcategory}
+        data-view=${View_Name}
+        data-menu-rank="product_table">
+    <table>
+        <tr>
+        ${Table_Headers}
+        </tr>
+        <tr>
+        ${Table_Content}
+        </tr>
+    </table>
+    </div>
+    ''')
