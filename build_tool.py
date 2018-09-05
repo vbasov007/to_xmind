@@ -64,7 +64,7 @@ def build_tool():
 
     out_html = template.make()
 
-    with open(args['OUT_HTML'], "w", encoding='utf-8') as out_html_file:
+    with open(os.path.join(working_folder, args['OUT_HTML']), "w", encoding='utf-8') as out_html_file:
         out_html_file.write(out_html)
 
 
