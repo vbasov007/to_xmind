@@ -20,7 +20,7 @@ def tree_to_html_list(root_node: XMindNode):
         return '<li><a href="{0}">{1}</a></li>'.format(href, root_node.name)
 
 
-def make_html(root_node: XMindNode, template):
+def make_html(root_node: XMindNode, template, category='', subcategory='', view_name=''):
 
     page_title = root_node.name
 
@@ -34,11 +34,13 @@ def make_html(root_node: XMindNode, template):
 
         table_content += '<td class="nowrap"><ul class="tree">{0}</ul></td>'.format(h)
 
-    return template.html.substitute(
+    return template().make(
+        Category=category,
+        Subcategory=subcategory,
+        View_Name=view_name,
         Page_Title=page_title,
         Table_Title=page_title,
         Table_Headers=table_headers_html,
         Table_Content=table_content,
-        Script=template.script,
-        Style=template.style,)
+        )
 
