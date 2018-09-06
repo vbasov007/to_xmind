@@ -259,6 +259,21 @@ class CompeleteToolTemplate:
         elem.style.display="block"
 
     }
+    
+    function UnpressButtonsInSection(div_section){
+    
+        ch = div_section.childNodes
+   
+        for( i = 0; i<ch.length; i++){
+            
+            if(ch[i].className == "pressed"){
+
+                ch[i].className == "unpressed"
+            }
+            
+        }
+        
+    }
 
     function HideLevelsBelow(div_obj){
 
@@ -268,16 +283,14 @@ class CompeleteToolTemplate:
         for(var i = 0; i < all_hideable.length; i++){
             if( MenuLevelInt(all_hideable[i].getAttribute("data-menu-rank")) > cur_level){
                 all_hideable[i].style.display="none"
+                //UnpressButtonsInSection(all_hideable[i])
             }
         }                
 
     }
 
-    var pressed_category_button_id =''
-    var pressed_subcategory_button_id=''
-    var pressed_view_button_id=''
 
-    function ShowPressedButton(obj){
+    function ChangePressedButton(obj){
     
         cur_section = obj.getAttribute("data-section")
         all_buttons = document.getElementsByTagName("button")
@@ -294,7 +307,13 @@ class CompeleteToolTemplate:
     
 
     function ShowNextLevel(obj){
-
+    
+        /*if( obj.className == "pressed"){
+            return
+        }*/
+        
+        ChangePressedButton(obj)
+    
         HideLevelsBelow(obj.parentNode)
 
         var hideableElems=document.getElementsByClassName("hideable")
@@ -459,8 +478,14 @@ class CompeleteToolTemplate:
         hideable {
             display: none
         }
+        
+        button {
+            margin: 2px 2px;
+        }
+        
         button.unpressed {
-        background-color: white; 
+        background-color: white;
+        font-weight: bold;
         color: black; 
         border-radius: 10px;
         border: 2px solid #f44336;
@@ -472,9 +497,14 @@ class CompeleteToolTemplate:
         
         button.pressed {
         background-color: lightgray; 
+        font-weight: bold;
         color: black; 
         border-radius: 10px;
         border: 2px solid #f44336;
+        }
+        span.buttons_header {
+            font-family: Verdana;
+            font-weight: bold 
         }
         
     '''
@@ -497,17 +527,17 @@ class CompeleteToolTemplate:
 class ButtonsAndDataSection:
 
     category_button_section_templ = Template('''
-        <div data-menu-rank="category_buttons">${Buttons_Html}</div>''')
+        <div data-menu-rank="category_buttons"><span class="buttons_header">CATEGORY: </span>${Buttons_Html}</div>''')
 
     subcategory_button_section_templ = Template('''
         <div class="hideable"
         data-activate-on="${ActivateOn}"
-        data-menu-rank="sub_category_buttons">${Buttons_Html}</div>''')
+        data-menu-rank="sub_category_buttons"><span class="buttons_header">SUB-CATEGORY: </span>${Buttons_Html}</div>''')
 
     view_select_button_section_templ = Template('''
         <div class="hideable"
         data-activate-on="${ActivateOn}"
-        data-menu-rank="view_select_buttons">${Buttons_Html}</div>''')
+        data-menu-rank="view_select_buttons"><span class="buttons_header">SELECT PART BY: </span>${Buttons_Html}</div>''')
 
     button_templ = Template('''
     <button class="unpressed" type="button" data-id="${Name}" data-section="${Section}" onclick=ShowNextLevel(this)>${Caption}</button>
