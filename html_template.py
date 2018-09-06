@@ -236,210 +236,247 @@ class CompeleteToolTemplate:
     ''')
 
     script = '''
-            function HideAllTables(){
-                var product_tables=document.getElementsByClassName("hideable")
-                for(var i = 0; i < product_tables.length; i++){
-                    product_tables[i].style.display="none"
-                }
+    function HideAllTables(){
+        var product_tables=document.getElementsByClassName("hideable")
+        for(var i = 0; i < product_tables.length; i++){
+            product_tables[i].style.display="none"
+        }
+    }
+
+    HideAllTables();
+
+    function ShowOneHideOthers(elem){
+
+        var hideable_elements = document.getElementsByClassName("hideable")
+        var cur_level = MenuLevelInt(elem.getAttribute("data-menu-rank"))
+
+        for(var i = 0; i < hideable_elements.length; i++){
+            if( MenuLevelInt(hideable_elements[i].getAttribute("data-menu-rank")) >= cur_level ){
+                hideable_elements[i].style.display="none"
             }
-
-            HideAllTables();
-
-            function ShowOneHideOthers(elem){
-
-                var hideable_elements = document.getElementsByClassName("hideable")
-                var cur_level = MenuLevelInt(elem.getAttribute("data-menu-rank"))
-
-                for(var i = 0; i < hideable_elements.length; i++){
-                    if( MenuLevelInt(hideable_elements[i].getAttribute("data-menu-rank")) >= cur_level ){
-                        hideable_elements[i].style.display="none"
-                    }
-                        
-                }
-                elem.style.display="block"
-
-            }
-
-            function HideLevelsBelow(div_obj){
-
-                cur_level = MenuLevelInt(div_obj.getAttribute("data-menu-rank"))
- 
-                var all_hideable=document.getElementsByClassName("hideable")
-                for(var i = 0; i < all_hideable.length; i++){
-                    if( MenuLevelInt(all_hideable[i].getAttribute("data-menu-rank")) > cur_level){
-                        all_hideable[i].style.display="none"
-                    }
-                }                
-
-            }
- 
-            function ShowNextLevel(obj){
-
-                HideLevelsBelow(obj.parentNode)
-
-                var hideableElems=document.getElementsByClassName("hideable")
-
-
-                for(i = 0; i < hideableElems.length; i++){
-                    if( hideableElems[i].getAttribute("data-activate-on") == obj.getAttribute("data-id")){
-        
-                        ShowOneHideOthers( hideableElems[i] )
-                    }
-                }
-            }
-
-            function MenuLevelInt(rank_name){
-                var levels = {
-                        "category_buttons": 0,
-                        "sub_category_buttons": 1,
-                        "view_select_buttons": 2,
-                        "product_table":3
-
-                    }
-                return levels[rank_name]
-            }
-    
-            var tree = document.querySelectorAll('ul.tree a:not(:last-child)');
-                for(var i = 0; i < tree.length; i++){
-                    tree[i].addEventListener('click', function(e) {
-                                var parent = e.target.parentElement;
-                                var classList = parent.classList;
-                                if(classList.contains("open")) {
-                                    classList.remove('open');
-                                    var opensubs = parent.querySelectorAll(':scope .open');
-                                    for(var i = 0; i < opensubs.length; i++){
-                                        opensubs[i].classList.remove('open');
-                                    }
-                                } else {
-                                    classList.add('open');
-                                }
-                                e.preventDefault();
-                            });
-                        }
                 
-                var x = document.getElementsByClassName('product_status');
-                for (var i = 0; i < x.length; i++){
-                    if (x[i].innerHTML=='not for new design' || x[i].innerHTML=='discontinued'){
-                        x[i].style.cssText= "color: red; font-weight: bold;";
+        }
+        elem.style.display="block"
+
+    }
+
+    function HideLevelsBelow(div_obj){
+
+        cur_level = MenuLevelInt(div_obj.getAttribute("data-menu-rank"))
+
+        var all_hideable=document.getElementsByClassName("hideable")
+        for(var i = 0; i < all_hideable.length; i++){
+            if( MenuLevelInt(all_hideable[i].getAttribute("data-menu-rank")) > cur_level){
+                all_hideable[i].style.display="none"
+            }
+        }                
+
+    }
+
+    var pressed_category_button_id =''
+    var pressed_subcategory_button_id=''
+    var pressed_view_button_id=''
+
+    ShowPressedButton(obj){
+    
+        cur_section = obj.getAttribute("data-section")
+        all_buttons = document.getElementsByTagName("button")
+        
+        for(i = 0; i < all_buttons.length; i++){
+            if( all_buttons[i].getAttribute("data-section") == cur_section ){
+                all_buttons[i].className = "unpressed"
+            }
+            
+        obj.className = "pressed"
+        
+    
+    }
+    
+
+    function ShowNextLevel(obj){
+
+        HideLevelsBelow(obj.parentNode)
+
+        var hideableElems=document.getElementsByClassName("hideable")
+
+        for(i = 0; i < hideableElems.length; i++){
+            if( hideableElems[i].getAttribute("data-activate-on") == obj.getAttribute("data-id")){
+
+                ShowOneHideOthers( hideableElems[i] )
+            }
+        }
+    }
+
+    function MenuLevelInt(rank_name){
+        var levels = {
+                "category_buttons": 0,
+                "sub_category_buttons": 1,
+                "view_select_buttons": 2,
+                "product_table":3
+
+            }
+        return levels[rank_name]
+    }
+
+    var tree = document.querySelectorAll('ul.tree a:not(:last-child)');
+    for(var i = 0; i < tree.length; i++){
+        tree[i].addEventListener('click', function(e) {
+                    var parent = e.target.parentElement;
+                    var classList = parent.classList;
+                    if(classList.contains("open")) {
+                        classList.remove('open');
+                        var opensubs = parent.querySelectorAll(':scope .open');
+                        for(var i = 0; i < opensubs.length; i++){
+                            opensubs[i].classList.remove('open');
+                        }
+                    } else {
+                        classList.add('open');
                     }
-                    else{
-                        x[i].style.cssText= "color: green; font-weight: bold;";
-                    }
-                }
-            '''
+                    e.preventDefault();
+                });
+            }
+        
+    var x = document.getElementsByClassName('product_status');
+    for (var i = 0; i < x.length; i++){
+        if (x[i].innerHTML=='not for new design' || x[i].innerHTML=='discontinued'){
+            x[i].style.cssText= "color: red; font-weight: bold;";
+        }
+        else{
+            x[i].style.cssText= "color: green; font-weight: bold;";
+        }
+    }
+    
+    
+
+    '''
 
     style = '''
         div.product_table {
-                        display: "none";
-                    }
-                    body {
-                                font-family: Arial;
-                            }
-                
-                            ul.tree li {
-                                list-style-type: none;
-                                position: relative;
-                            }
-                
-                            ul.tree li ul {
-                                display: none;
-                            }
-                
-                            ul.tree li.open > ul {
-                                display: block;
-                            }
-                
-                            ul.tree li a {
-                                color: black;
-                                text-decoration: none;
-                            }
-                
-                            ul.tree li a:before {
-                                height: 1em;
-                                padding:0 .1em;
-                                font-size: .8em;
-                                display: block;
-                                position: absolute;
-                                left: -1.3em;
-                                top: .2em;
-                            }
-                
-                            ul.tree li > a:not(:last-child):before {
-                                content: '+';
-                            }
-                
-                            ul.tree li.open > a:not(:last-child):before {
-                                content: '-';
-                            }
-                            td {
-                                vertical-align: top;
-                            }
-                            
-                            table, th, td {
-                                border: 3px solid red;
-                                border-collapse: collapse;
-                            }
-                            
-                            th {
-                                background: lightgrey
-                            }
-                            
-                            tr td:first-child {
-                                background: lightgrey;
-                                font-weight: bold;
-                            }
-                            
-                            a:hover {
-                                background: lightgray;
-                            }
-                            
-                            span.package, span.housing {
-                                font-weight: bold;
-                                color: black;
-                            }
-                            
-                            span.technology {
-                                font-weight: bold;
-                                color: green;
-                            }
-                            
-                            span.configuration {
-                                font-weight: bold;
-                                color: brown;
-                            }
-                            
-                            span.features {
-                                font-weight: bold;
-                                color: darkblue;
-                            }
-                            
-                            span.qualification, span.applications {
-                                font-weight: bold;
-                                color: darkblue;
-                            }
-                            
-                            
-                            span.product {
-                                font-weight: bold;
-                                color: darkviolet;
-                            }
-                            span.measure_value {
-                                font-weight: bold;
-                                color: darkblue;
-                            }
-                            
-                            span.measure_unit {
-                                font-weight: bold;
-                                color: orangered;
-                            }
-                            
-                            td.nowrap{
-                                white-space: nowrap;
-                            }
-                            
-                            hideable {
-                                display: none
-                            }
+            display: "none";
+        }
+        body {
+            font-family: Arial;
+        }
+        ul.tree li {
+            list-style-type: none;
+            position: relative;
+        }
+        ul.tree li ul {
+            display: none;
+        }
+        ul.tree li.open > ul {
+            display: block;
+        }
+
+        ul.tree li a {
+            color: black;
+            text-decoration: none;
+        }
+
+        ul.tree li a:before {
+            height: 1em;
+            padding:0 .1em;
+            font-size: .8em;
+            display: block;
+            position: absolute;
+            left: -1.3em;
+            top: .2em;
+        }
+
+        ul.tree li > a:not(:last-child):before {
+            content: '+';
+        }
+
+        ul.tree li.open > a:not(:last-child):before {
+            content: '-';
+        }
+        td {
+            vertical-align: top;
+        }
+        
+        table, th, td {
+            border: 3px solid red;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: lightgrey
+        }
+        
+        tr td:first-child {
+            background: lightgrey;
+            font-weight: bold;
+        }
+        
+        a:hover {
+            background: lightgray;
+        }
+        
+        span.package, span.housing {
+            font-weight: bold;
+            color: black;
+        }
+        
+        span.technology {
+            font-weight: bold;
+            color: green;
+        }
+        
+        span.configuration {
+            font-weight: bold;
+            color: brown;
+        }
+        
+        span.features {
+            font-weight: bold;
+            color: darkblue;
+        }
+        
+        span.qualification, span.applications {
+            font-weight: bold;
+            color: darkblue;
+        }
+        
+        
+        span.product {
+            font-weight: bold;
+            color: darkviolet;
+        }
+        span.measure_value {
+            font-weight: bold;
+            color: darkblue;
+        }
+        
+        span.measure_unit {
+            font-weight: bold;
+            color: orangered;
+        }
+        
+        td.nowrap{
+            white-space: nowrap;
+        }
+        
+        hideable {
+            display: none
+        }
+        button.unpressed {
+        background-color: white; 
+        color: black; 
+        border-radius: 10px;
+        border: 2px solid #f44336;
+        }
+        
+        button:hover {
+        background-color: lightgray; 
+        }
+        
+        button.pressed {
+        background-color: lightgray; 
+        color: black; 
+        border-radius: 10px;
+        border: 2px solid #f44336;
+        }
+        
     '''
 
     def __init__(self):
@@ -473,7 +510,7 @@ class ButtonsAndDataSection:
         data-menu-rank="view_select_buttons">${Buttons_Html}</div>''')
 
     button_templ = Template('''
-    <button type="button" data-id="${Name}" onclick=ShowNextLevel(this)>${Caption}</button>
+    <button class="unpressed" type="button" data-id="${Name}" data-section="${Section}" onclick=ShowNextLevel(this)>${Caption}</button>
     ''')
 
     templ_by_level = [category_button_section_templ, subcategory_button_section_templ, view_select_button_section_templ]
@@ -517,8 +554,8 @@ class ButtonsAndDataSection:
 
         self.tables.append(table_html)
 
-    def button_html(self, name, caption):
-        return self.button_templ.substitute(Name=name, Caption=caption)
+    def button_html(self, name, caption, section):
+        return self.button_templ.substitute(Name=name, Caption=caption, Section=section)
 
     def section_html(self, activate_on, level, buttons_html):
         return self.templ_by_level[level].substitute(ActivateOn=activate_on, Buttons_Html=buttons_html)
@@ -529,7 +566,7 @@ class ButtonsAndDataSection:
             but_html = ''
             for button in self.buttons:
                 if button['section'] == section['name']:
-                    but_html += self.button_html(button['name'], button['caption'])
+                    but_html += self.button_html(button['name'], button['caption'], button['section'])
             out_html += self.section_html(section['name'], section['level'], but_html)
 
         return out_html
