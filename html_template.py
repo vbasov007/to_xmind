@@ -277,7 +277,7 @@ class CompeleteToolTemplate:
     var pressed_subcategory_button_id=''
     var pressed_view_button_id=''
 
-    ShowPressedButton(obj){
+    function ShowPressedButton(obj){
     
         cur_section = obj.getAttribute("data-section")
         all_buttons = document.getElementsByTagName("button")
@@ -286,7 +286,7 @@ class CompeleteToolTemplate:
             if( all_buttons[i].getAttribute("data-section") == cur_section ){
                 all_buttons[i].className = "unpressed"
             }
-            
+        }   
         obj.className = "pressed"
         
     
