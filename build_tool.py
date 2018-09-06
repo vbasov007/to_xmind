@@ -42,6 +42,8 @@ def build_tool():
 
         row = config_dict[i]
 
+        row = {str(key): str(row[key]) for key in row}
+
         print(row)
 
         df = pd.read_excel(os.path.join(working_folder, row['input_xlsx']))

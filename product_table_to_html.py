@@ -29,7 +29,6 @@ def product_table_to_html(df,
 
     a_include_only = []
     a_exclude = []
-    a_match = []
 
     if len(include_only) > 0:
         a_include_only = include_only.split(';')
@@ -37,8 +36,7 @@ def product_table_to_html(df,
     if len(exclude) > 0:
         a_exclude = exclude.split(';')
 
-    if len(match) > 0:
-        a_match = match.split(';')
+    a_match = match
 
     print("a_tree_levels:", a_tree_levels)
     print("a_annotations:", a_annotations)
